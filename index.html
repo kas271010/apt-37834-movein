@@ -160,6 +160,16 @@
             <strong>Please Note:</strong> The photos below marked in red highlight pre-existing conditions and defects observed upon move-in that we would like documented in our file. These were present at the time of move-in and should not be attributed to tenant use or wear.
             <br><br>
             <strong>Additional Note &mdash; Hot Water:</strong> Hot shower water has been intermittently failing, first noted on April 3, 2026. We will continue to monitor and submit a formal maintenance request if the issue persists beyond an isolated occurrence.
+            <br><br>
+            <strong>Professional Move-In Cleaning:</strong> Due to apparent dust and debris upon move-in, we commissioned a professional Move In/Out deep clean from Verde Luxe Cleaning on April 1, 2026 (Booking #3459, $385.00, including full carpet cleaning, inside cabinets, inside fridge). Receipt included below for reference.
+        </div>
+
+        <div class="section-title" style="color: #2e7d32; border-bottom-color: #2e7d32;">Professional Cleaning Receipt</div>
+        <div class="gallery" style="grid-template-columns: 1fr; max-width: 600px;">
+            <div class="gallery-item" style="border: 2px solid #2e7d32;" onclick="openLightbox(0, 'receipt')">
+                <img src="CLEANING_RECEIPT_VerdeLuxe_2026-04-01.jpg" alt="Verde Luxe Cleaning Receipt" loading="lazy" style="height: auto; max-height: 500px; object-fit: contain; background: #1a1a2e;">
+                <div class="caption" style="color: #2e7d32; font-weight: 600;">Verde Luxe Move-In Deep Clean &mdash; April 1, 2026 ($385.00)</div>
+            </div>
         </div>
 
         <div class="section-title issues">Pre-Existing Issues Noted (9)</div>
@@ -743,8 +753,12 @@
     const issueImages = ["ISSUE_Beneath_Dishwasher_defect.jpg","ISSUE_Loose_stove_knob.jpg","ISSUE_Missing_valance.jpg","ISSUE_broken_blind.jpg","ISSUE_broken_door_smaller_bedroom.jpg","ISSUE_main_door_missing_floor_seal.jpg","ISSUE_paint_spotted_floors.jpg","ISSUE_sealing_cracks.jpg","ISSUE_wall_cabinet_defect.jpg"];
     const generalImages = ["IMG_0762.jpg","IMG_0763.jpg","IMG_0768.jpg","IMG_0769.jpg","IMG_0770.jpg","IMG_0772.jpg","IMG_0773.jpg","IMG_0774.jpg","IMG_0775.jpg","IMG_0776.jpg","IMG_0777.jpg","IMG_0778.jpg","IMG_0779.jpg","IMG_6108.jpg","IMG_6109.jpg","IMG_6110.jpg","IMG_6111.jpg","IMG_6112.jpg","IMG_6113.jpg","IMG_6114.jpg","IMG_6115.jpg","IMG_6116.jpg","IMG_6117.jpg","IMG_6119.jpg","IMG_6121.jpg","IMG_6122.jpg","IMG_6123.jpg","IMG_6124.jpg","IMG_6125.jpg","IMG_6127.jpg","IMG_6128.jpg","IMG_6129.jpg","IMG_6130.jpg","IMG_6131.jpg","IMG_6133.jpg","IMG_6134.jpg","IMG_6135.jpg","IMG_6136.jpg","IMG_6137.jpg","IMG_6138.jpg","IMG_6139.jpg","IMG_6140.jpg","IMG_6141.jpg","IMG_6142.jpg","IMG_6144.jpg","IMG_6145.jpg","IMG_6146.jpg","IMG_6147.jpg","IMG_6149.jpg","IMG_6150.jpg","IMG_6151.jpg","IMG_6152.jpg","IMG_6153.jpg","IMG_6154.jpg","IMG_6155.jpg","IMG_6156.jpg","IMG_6157.jpg","IMG_6158.jpg","IMG_6159.jpg","IMG_6160.jpg","IMG_6162.jpg","IMG_6163.jpg","IMG_6164.jpg","IMG_6165.jpg","IMG_6166.jpg","IMG_6167.jpg","IMG_6168.jpg","IMG_6169.jpg","IMG_6170.jpg","IMG_6171.jpg","IMG_6173.jpg","IMG_6174.jpg","IMG_6175.jpg","IMG_6176.jpg","IMG_6177.jpg","IMG_6178.jpg","IMG_6179.jpg","IMG_6180.jpg","IMG_6181.jpg","IMG_6182.jpg","IMG_6183.jpg","IMG_6184.jpg","IMG_6185.jpg","IMG_6186.jpg","IMG_6187.jpg","IMG_6188.jpg","IMG_6189.jpg","IMG_6190.jpg","IMG_6191.jpg","IMG_6192.jpg","IMG_6193.jpg","IMG_6194.jpg","IMG_6195.jpg","IMG_6196.jpg","IMG_6197.jpg","IMG_6198.jpg","IMG_6201.jpg","IMG_6202.jpg","IMG_6203.jpg","IMG_6204.jpg","IMG_6205.jpg","IMG_6206.jpg","IMG_6207.jpg","IMG_6208.jpg","IMG_6209.jpg","IMG_6210.jpg","IMG_6211.jpg","IMG_6212.jpg","IMG_6213.jpg","IMG_6214.jpg","IMG_6215.jpg","IMG_6216.jpg","IMG_6217.jpg","IMG_6218.jpg","IMG_6219.jpg","IMG_6220.jpg","IMG_6221.jpg","IMG_6222.jpg","IMG_6223.jpg","IMG_6224.jpg","IMG_6225.jpg","IMG_6226.jpg","IMG_6227.jpg"];
 
+    const receiptImages = ["CLEANING_RECEIPT_VerdeLuxe_2026-04-01.jpg"];
+
     function openLightbox(index, type) {
-        currentList = type === 'issue' ? issueImages : generalImages;
+        if (type === 'issue') currentList = issueImages;
+        else if (type === 'receipt') currentList = receiptImages;
+        else currentList = generalImages;
         currentIndex = index;
         document.getElementById('lightbox-img').src = currentList[index];
         document.getElementById('lightbox-counter').textContent = `${index + 1} / ${currentList.length}`;
