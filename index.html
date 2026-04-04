@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apartment 37834 #302 — Move-In Documentation</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; }
+
+        .auth-screen {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d3748 100%);
+            display: flex; align-items: center; justify-content: center; z-index: 10000;
+            color: white;
+        }
+        .auth-box {
+            background: white; color: #333; border-radius: 14px; padding: 2.5rem 2rem;
+            max-width: 420px; width: 90%; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .auth-box h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+        .auth-box p { font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; }
+        .auth-box input {
+            width: 100%; padding: 0.9rem 1rem; font-size: 1rem;
+            border: 2px solid #ddd; border-radius: 8px; text-align: center;
+            letter-spacing: 0.1em; font-family: monospace;
+        }
+        .auth-box input:focus { outline: none; border-color: #1a1a2e; }
+        .auth-box button {
+            width: 100%; padding: 0.9rem; margin-top: 1rem; background: #1a1a2e;
+            color: white; border: none; border-radius: 8px; font-size: 1rem;
+            font-weight: 600; cursor: pointer; transition: background 0.2s;
+        }
+        .auth-box button:hover { background: #2d3748; }
+        .auth-error { color: #d32f2f; font-size: 0.85rem; margin-top: 0.5rem; display: none; }
+        .auth-lock { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+        .header {
+            background: #1a1a2e; color: white; padding: 1.5rem; text-align: center;
+            position: sticky; top: 0; z-index: 100;
+        }
+        .header h1 { font-size: 1.3rem; margin-bottom: 0.3rem; }
+        .header p { font-size: 0.82rem; opacity: 0.7; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 1.25rem; }
+
+        .info-bar {
+            background: white; border-radius: 10px; padding: 1.25rem 1.5rem;
+            margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            display: flex; gap: 2rem; flex-wrap: wrap; font-size: 0.88rem;
+        }
+        .info-item { display: flex; flex-direction: column; }
+        .info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: #888; margin-bottom: 0.15rem; }
+        .info-value { font-weight: 600; }
+
+        .section-title {
+            font-size: 1.15rem; font-weight: 700; margin: 1.75rem 0 1rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid #ddd;
+        }
+        .section-title.issues { color: #c62828; border-bottom-color: #c62828; }
+
+        .issues-notice {
+            background: #fff3e0; border-left: 4px solid #f57c00; padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem; border-radius: 4px; font-size: 0.9rem; line-height: 1.6;
+        }
+        .issues-notice strong { color: #e65100; }
+
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 0.85rem; }
+        .gallery-item {
+            background: white; border-radius: 8px; overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08); cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .gallery-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        .gallery-item img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        .gallery-item .caption { padding: 0.55rem 0.75rem; font-size: 0.78rem; color: #666; }
+
+        .issue-item { border: 2px solid #c62828; }
+        .issue-caption { color: #c62828 !important; font-weight: 600; }
+
+        .lightbox {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.95); z-index: 1000;
+            justify-content: center; align-items: center; cursor: pointer;
+        }
+        .lightbox.active { display: flex; }
+        .lightbox img { max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 4px; }
+        .lightbox-close {
+            position: absolute; top: 1rem; right: 1.5rem; color: white; font-size: 2rem;
+            cursor: pointer; opacity: 0.7; background: none; border: none;
+        }
+        .lightbox-close:hover { opacity: 1; }
+        .lightbox-nav {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            color: white; font-size: 2.5rem; cursor: pointer; opacity: 0.5;
+            background: none; border: none; padding: 1rem;
+        }
+        .lightbox-nav:hover { opacity: 1; }
+        .lightbox-prev { left: 1rem; }
+        .lightbox-next { right: 1rem; }
+        .lightbox-counter {
+            position: absolute; bottom: 1rem; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.8); font-size: 0.9rem;
+            background: rgba(0,0,0,0.5); padding: 0.4rem 0.9rem; border-radius: 20px;
+        }
+
+        .footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: #999; }
+
+        @media (max-width: 600px) {
+            .gallery { grid-template-columns: 1fr 1fr; gap: 0.4rem; }
+            .gallery-item img { height: 140px; }
+            .info-bar { gap: 1rem; padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-screen" id="authScreen">
+    <div class="auth-box">
+        <div class="auth-lock">&#128274;</div>
+        <h2>Private Documentation</h2>
+        <p>This gallery contains move-in condition documentation.<br>Please enter the access code to continue.</p>
+        <input type="password" id="authInput" placeholder="Access Code" autofocus>
+        <div class="auth-error" id="authError">Incorrect code. Please try again.</div>
+        <button onclick="checkAuth()">View Gallery</button>
+    </div>
+</div>
+
+<div id="content" style="display: none;">
+    <div class="header">
+        <h1>Apartment 37834 Scotsdale Cir #302 &mdash; Move-In Condition</h1>
+        <p>Documented April 4, 2026 &middot; Westland, MI 48185</p>
+    </div>
+
+    <div class="container">
+        <div class="info-bar">
+            <div class="info-item">
+                <span class="info-label">Unit</span>
+                <span class="info-value">37834 Scotsdale Cir #302</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Location</span>
+                <span class="info-value">Westland, MI 48185</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Tenant</span>
+                <span class="info-value">Kasim Hassen &amp; Amel Salim</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Documented</span>
+                <span class="info-value">April 4, 2026</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Total Photos</span>
+                <span class="info-value">132 (9 flagged issues)</span>
+            </div>
+        </div>
+
+        <div class="issues-notice">
+            <strong>Please Note:</strong> The photos below marked in red highlight pre-existing conditions and defects observed upon move-in that we would like documented in our file. These were present at the time of move-in and should not be attributed to tenant use or wear.
+            <br><br>
+            <strong>Additional Note &mdash; Hot Water:</strong> Hot shower water has been intermittently failing, first noted on April 3, 2026. We will continue to monitor and submit a formal maintenance request if the issue persists beyond an isolated occurrence.
+        </div>
+
+        <div class="section-title issues">Pre-Existing Issues Noted (9)</div>
+        <div class="gallery">
+        <div class="gallery-item issue-item" onclick="openLightbox(0, 'issue')">
+            <img src="ISSUE_Beneath_Dishwasher_defect.jpg" alt="Beneath Dishwasher Defect" loading="lazy">
+            <div class="caption issue-caption">Beneath Dishwasher Defect</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(1, 'issue')">
+            <img src="ISSUE_Loose_stove_knob.jpg" alt="Loose Stove Knob" loading="lazy">
+            <div class="caption issue-caption">Loose Stove Knob</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(2, 'issue')">
+            <img src="ISSUE_Missing_valance.jpg" alt="Missing Valance" loading="lazy">
+            <div class="caption issue-caption">Missing Valance</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(3, 'issue')">
+            <img src="ISSUE_broken_blind.jpg" alt="Broken Blind" loading="lazy">
+            <div class="caption issue-caption">Broken Blind</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(4, 'issue')">
+            <img src="ISSUE_broken_door_smaller_bedroom.jpg" alt="Broken Door Smaller Bedroom" loading="lazy">
+            <div class="caption issue-caption">Broken Door Smaller Bedroom</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(5, 'issue')">
+            <img src="ISSUE_main_door_missing_floor_seal.jpg" alt="Main Door Missing Floor Seal" loading="lazy">
+            <div class="caption issue-caption">Main Door Missing Floor Seal</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(6, 'issue')">
+            <img src="ISSUE_paint_spotted_floors.jpg" alt="Paint Spotted Floors" loading="lazy">
+            <div class="caption issue-caption">Paint Spotted Floors</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(7, 'issue')">
+            <img src="ISSUE_sealing_cracks.jpg" alt="Sealing Cracks" loading="lazy">
+            <div class="caption issue-caption">Sealing Cracks</div>
+        </div>
+        <div class="gallery-item issue-item" onclick="openLightbox(8, 'issue')">
+            <img src="ISSUE_wall_cabinet_defect.jpg" alt="Wall Cabinet Defect" loading="lazy">
+            <div class="caption issue-caption">Wall Cabinet Defect</div>
+        </div>
+        </div>
+
+        <div class="section-title">General Condition Documentation (123)</div>
+        <div class="gallery">
+        <div class="gallery-item" onclick="openLightbox(0, 'general')">
+            <img src="IMG_0762.jpg" alt="IMG_0762" loading="lazy">
+            <div class="caption">IMG_0762</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(1, 'general')">
+            <img src="IMG_0763.jpg" alt="IMG_0763" loading="lazy">
+            <div class="caption">IMG_0763</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(2, 'general')">
+            <img src="IMG_0768.jpg" alt="IMG_0768" loading="lazy">
+            <div class="caption">IMG_0768</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(3, 'general')">
+            <img src="IMG_0769.jpg" alt="IMG_0769" loading="lazy">
+            <div class="caption">IMG_0769</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(4, 'general')">
+            <img src="IMG_0770.jpg" alt="IMG_0770" loading="lazy">
+            <div class="caption">IMG_0770</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(5, 'general')">
+            <img src="IMG_0772.jpg" alt="IMG_0772" loading="lazy">
+            <div class="caption">IMG_0772</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(6, 'general')">
+            <img src="IMG_0773.jpg" alt="IMG_0773" loading="lazy">
+            <div class="caption">IMG_0773</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(7, 'general')">
+            <img src="IMG_0774.jpg" alt="IMG_0774" loading="lazy">
+            <div class="caption">IMG_0774</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(8, 'general')">
+            <img src="IMG_0775.jpg" alt="IMG_0775" loading="lazy">
+            <div class="caption">IMG_0775</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(9, 'general')">
+            <img src="IMG_0776.jpg" alt="IMG_0776" loading="lazy">
+            <div class="caption">IMG_0776</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(10, 'general')">
+            <img src="IMG_0777.jpg" alt="IMG_0777" loading="lazy">
+            <div class="caption">IMG_0777</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(11, 'general')">
+            <img src="IMG_0778.jpg" alt="IMG_0778" loading="lazy">
+            <div class="caption">IMG_0778</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(12, 'general')">
+            <img src="IMG_0779.jpg" alt="IMG_0779" loading="lazy">
+            <div class="caption">IMG_0779</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(13, 'general')">
+            <img src="IMG_6108.jpg" alt="IMG_6108" loading="lazy">
+            <div class="caption">IMG_6108</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(14, 'general')">
+            <img src="IMG_6109.jpg" alt="IMG_6109" loading="lazy">
+            <div class="caption">IMG_6109</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(15, 'general')">
+            <img src="IMG_6110.jpg" alt="IMG_6110" loading="lazy">
+            <div class="caption">IMG_6110</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(16, 'general')">
+            <img src="IMG_6111.jpg" alt="IMG_6111" loading="lazy">
+            <div class="caption">IMG_6111</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(17, 'general')">
+            <img src="IMG_6112.jpg" alt="IMG_6112" loading="lazy">
+            <div class="caption">IMG_6112</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(18, 'general')">
+            <img src="IMG_6113.jpg" alt="IMG_6113" loading="lazy">
+            <div class="caption">IMG_6113</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(19, 'general')">
+            <img src="IMG_6114.jpg" alt="IMG_6114" loading="lazy">
+            <div class="caption">IMG_6114</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(20, 'general')">
+            <img src="IMG_6115.jpg" alt="IMG_6115" loading="lazy">
+            <div class="caption">IMG_6115</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(21, 'general')">
+            <img src="IMG_6116.jpg" alt="IMG_6116" loading="lazy">
+            <div class="caption">IMG_6116</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(22, 'general')">
+            <img src="IMG_6117.jpg" alt="IMG_6117" loading="lazy">
+            <div class="caption">IMG_6117</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(23, 'general')">
+            <img src="IMG_6119.jpg" alt="IMG_6119" loading="lazy">
+            <div class="caption">IMG_6119</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(24, 'general')">
+            <img src="IMG_6121.jpg" alt="IMG_6121" loading="lazy">
+            <div class="caption">IMG_6121</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(25, 'general')">
+            <img src="IMG_6122.jpg" alt="IMG_6122" loading="lazy">
+            <div class="caption">IMG_6122</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(26, 'general')">
+            <img src="IMG_6123.jpg" alt="IMG_6123" loading="lazy">
+            <div class="caption">IMG_6123</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(27, 'general')">
+            <img src="IMG_6124.jpg" alt="IMG_6124" loading="lazy">
+            <div class="caption">IMG_6124</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(28, 'general')">
+            <img src="IMG_6125.jpg" alt="IMG_6125" loading="lazy">
+            <div class="caption">IMG_6125</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(29, 'general')">
+            <img src="IMG_6127.jpg" alt="IMG_6127" loading="lazy">
+            <div class="caption">IMG_6127</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(30, 'general')">
+            <img src="IMG_6128.jpg" alt="IMG_6128" loading="lazy">
+            <div class="caption">IMG_6128</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(31, 'general')">
+            <img src="IMG_6129.jpg" alt="IMG_6129" loading="lazy">
+            <div class="caption">IMG_6129</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(32, 'general')">
+            <img src="IMG_6130.jpg" alt="IMG_6130" loading="lazy">
+            <div class="caption">IMG_6130</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(33, 'general')">
+            <img src="IMG_6131.jpg" alt="IMG_6131" loading="lazy">
+            <div class="caption">IMG_6131</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(34, 'general')">
+            <img src="IMG_6133.jpg" alt="IMG_6133" loading="lazy">
+            <div class="caption">IMG_6133</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(35, 'general')">
+            <img src="IMG_6134.jpg" alt="IMG_6134" loading="lazy">
+            <div class="caption">IMG_6134</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(36, 'general')">
+            <img src="IMG_6135.jpg" alt="IMG_6135" loading="lazy">
+            <div class="caption">IMG_6135</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(37, 'general')">
+            <img src="IMG_6136.jpg" alt="IMG_6136" loading="lazy">
+            <div class="caption">IMG_6136</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(38, 'general')">
+            <img src="IMG_6137.jpg" alt="IMG_6137" loading="lazy">
+            <div class="caption">IMG_6137</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(39, 'general')">
+            <img src="IMG_6138.jpg" alt="IMG_6138" loading="lazy">
+            <div class="caption">IMG_6138</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(40, 'general')">
+            <img src="IMG_6139.jpg" alt="IMG_6139" loading="lazy">
+            <div class="caption">IMG_6139</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(41, 'general')">
+            <img src="IMG_6140.jpg" alt="IMG_6140" loading="lazy">
+            <div class="caption">IMG_6140</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(42, 'general')">
+            <img src="IMG_6141.jpg" alt="IMG_6141" loading="lazy">
+            <div class="caption">IMG_6141</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(43, 'general')">
+            <img src="IMG_6142.jpg" alt="IMG_6142" loading="lazy">
+            <div class="caption">IMG_6142</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(44, 'general')">
+            <img src="IMG_6144.jpg" alt="IMG_6144" loading="lazy">
+            <div class="caption">IMG_6144</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(45, 'general')">
+            <img src="IMG_6145.jpg" alt="IMG_6145" loading="lazy">
+            <div class="caption">IMG_6145</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(46, 'general')">
+            <img src="IMG_6146.jpg" alt="IMG_6146" loading="lazy">
+            <div class="caption">IMG_6146</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(47, 'general')">
+            <img src="IMG_6147.jpg" alt="IMG_6147" loading="lazy">
+            <div class="caption">IMG_6147</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(48, 'general')">
+            <img src="IMG_6149.jpg" alt="IMG_6149" loading="lazy">
+            <div class="caption">IMG_6149</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(49, 'general')">
+            <img src="IMG_6150.jpg" alt="IMG_6150" loading="lazy">
+            <div class="caption">IMG_6150</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(50, 'general')">
+            <img src="IMG_6151.jpg" alt="IMG_6151" loading="lazy">
+            <div class="caption">IMG_6151</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(51, 'general')">
+            <img src="IMG_6152.jpg" alt="IMG_6152" loading="lazy">
+            <div class="caption">IMG_6152</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(52, 'general')">
+            <img src="IMG_6153.jpg" alt="IMG_6153" loading="lazy">
+            <div class="caption">IMG_6153</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(53, 'general')">
+            <img src="IMG_6154.jpg" alt="IMG_6154" loading="lazy">
+            <div class="caption">IMG_6154</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(54, 'general')">
+            <img src="IMG_6155.jpg" alt="IMG_6155" loading="lazy">
+            <div class="caption">IMG_6155</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(55, 'general')">
+            <img src="IMG_6156.jpg" alt="IMG_6156" loading="lazy">
+            <div class="caption">IMG_6156</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(56, 'general')">
+            <img src="IMG_6157.jpg" alt="IMG_6157" loading="lazy">
+            <div class="caption">IMG_6157</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(57, 'general')">
+            <img src="IMG_6158.jpg" alt="IMG_6158" loading="lazy">
+            <div class="caption">IMG_6158</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(58, 'general')">
+            <img src="IMG_6159.jpg" alt="IMG_6159" loading="lazy">
+            <div class="caption">IMG_6159</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(59, 'general')">
+            <img src="IMG_6160.jpg" alt="IMG_6160" loading="lazy">
+            <div class="caption">IMG_6160</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(60, 'general')">
+            <img src="IMG_6162.jpg" alt="IMG_6162" loading="lazy">
+            <div class="caption">IMG_6162</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(61, 'general')">
+            <img src="IMG_6163.jpg" alt="IMG_6163" loading="lazy">
+            <div class="caption">IMG_6163</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(62, 'general')">
+            <img src="IMG_6164.jpg" alt="IMG_6164" loading="lazy">
+            <div class="caption">IMG_6164</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(63, 'general')">
+            <img src="IMG_6165.jpg" alt="IMG_6165" loading="lazy">
+            <div class="caption">IMG_6165</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(64, 'general')">
+            <img src="IMG_6166.jpg" alt="IMG_6166" loading="lazy">
+            <div class="caption">IMG_6166</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(65, 'general')">
+            <img src="IMG_6167.jpg" alt="IMG_6167" loading="lazy">
+            <div class="caption">IMG_6167</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(66, 'general')">
+            <img src="IMG_6168.jpg" alt="IMG_6168" loading="lazy">
+            <div class="caption">IMG_6168</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(67, 'general')">
+            <img src="IMG_6169.jpg" alt="IMG_6169" loading="lazy">
+            <div class="caption">IMG_6169</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(68, 'general')">
+            <img src="IMG_6170.jpg" alt="IMG_6170" loading="lazy">
+            <div class="caption">IMG_6170</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(69, 'general')">
+            <img src="IMG_6171.jpg" alt="IMG_6171" loading="lazy">
+            <div class="caption">IMG_6171</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(70, 'general')">
+            <img src="IMG_6173.jpg" alt="IMG_6173" loading="lazy">
+            <div class="caption">IMG_6173</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(71, 'general')">
+            <img src="IMG_6174.jpg" alt="IMG_6174" loading="lazy">
+            <div class="caption">IMG_6174</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(72, 'general')">
+            <img src="IMG_6175.jpg" alt="IMG_6175" loading="lazy">
+            <div class="caption">IMG_6175</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(73, 'general')">
+            <img src="IMG_6176.jpg" alt="IMG_6176" loading="lazy">
+            <div class="caption">IMG_6176</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(74, 'general')">
+            <img src="IMG_6177.jpg" alt="IMG_6177" loading="lazy">
+            <div class="caption">IMG_6177</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(75, 'general')">
+            <img src="IMG_6178.jpg" alt="IMG_6178" loading="lazy">
+            <div class="caption">IMG_6178</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(76, 'general')">
+            <img src="IMG_6179.jpg" alt="IMG_6179" loading="lazy">
+            <div class="caption">IMG_6179</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(77, 'general')">
+            <img src="IMG_6180.jpg" alt="IMG_6180" loading="lazy">
+            <div class="caption">IMG_6180</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(78, 'general')">
+            <img src="IMG_6181.jpg" alt="IMG_6181" loading="lazy">
+            <div class="caption">IMG_6181</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(79, 'general')">
+            <img src="IMG_6182.jpg" alt="IMG_6182" loading="lazy">
+            <div class="caption">IMG_6182</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(80, 'general')">
+            <img src="IMG_6183.jpg" alt="IMG_6183" loading="lazy">
+            <div class="caption">IMG_6183</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(81, 'general')">
+            <img src="IMG_6184.jpg" alt="IMG_6184" loading="lazy">
+            <div class="caption">IMG_6184</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(82, 'general')">
+            <img src="IMG_6185.jpg" alt="IMG_6185" loading="lazy">
+            <div class="caption">IMG_6185</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(83, 'general')">
+            <img src="IMG_6186.jpg" alt="IMG_6186" loading="lazy">
+            <div class="caption">IMG_6186</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(84, 'general')">
+            <img src="IMG_6187.jpg" alt="IMG_6187" loading="lazy">
+            <div class="caption">IMG_6187</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(85, 'general')">
+            <img src="IMG_6188.jpg" alt="IMG_6188" loading="lazy">
+            <div class="caption">IMG_6188</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(86, 'general')">
+            <img src="IMG_6189.jpg" alt="IMG_6189" loading="lazy">
+            <div class="caption">IMG_6189</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(87, 'general')">
+            <img src="IMG_6190.jpg" alt="IMG_6190" loading="lazy">
+            <div class="caption">IMG_6190</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(88, 'general')">
+            <img src="IMG_6191.jpg" alt="IMG_6191" loading="lazy">
+            <div class="caption">IMG_6191</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(89, 'general')">
+            <img src="IMG_6192.jpg" alt="IMG_6192" loading="lazy">
+            <div class="caption">IMG_6192</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(90, 'general')">
+            <img src="IMG_6193.jpg" alt="IMG_6193" loading="lazy">
+            <div class="caption">IMG_6193</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(91, 'general')">
+            <img src="IMG_6194.jpg" alt="IMG_6194" loading="lazy">
+            <div class="caption">IMG_6194</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(92, 'general')">
+            <img src="IMG_6195.jpg" alt="IMG_6195" loading="lazy">
+            <div class="caption">IMG_6195</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(93, 'general')">
+            <img src="IMG_6196.jpg" alt="IMG_6196" loading="lazy">
+            <div class="caption">IMG_6196</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(94, 'general')">
+            <img src="IMG_6197.jpg" alt="IMG_6197" loading="lazy">
+            <div class="caption">IMG_6197</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(95, 'general')">
+            <img src="IMG_6198.jpg" alt="IMG_6198" loading="lazy">
+            <div class="caption">IMG_6198</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(96, 'general')">
+            <img src="IMG_6201.jpg" alt="IMG_6201" loading="lazy">
+            <div class="caption">IMG_6201</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(97, 'general')">
+            <img src="IMG_6202.jpg" alt="IMG_6202" loading="lazy">
+            <div class="caption">IMG_6202</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(98, 'general')">
+            <img src="IMG_6203.jpg" alt="IMG_6203" loading="lazy">
+            <div class="caption">IMG_6203</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(99, 'general')">
+            <img src="IMG_6204.jpg" alt="IMG_6204" loading="lazy">
+            <div class="caption">IMG_6204</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(100, 'general')">
+            <img src="IMG_6205.jpg" alt="IMG_6205" loading="lazy">
+            <div class="caption">IMG_6205</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(101, 'general')">
+            <img src="IMG_6206.jpg" alt="IMG_6206" loading="lazy">
+            <div class="caption">IMG_6206</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(102, 'general')">
+            <img src="IMG_6207.jpg" alt="IMG_6207" loading="lazy">
+            <div class="caption">IMG_6207</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(103, 'general')">
+            <img src="IMG_6208.jpg" alt="IMG_6208" loading="lazy">
+            <div class="caption">IMG_6208</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(104, 'general')">
+            <img src="IMG_6209.jpg" alt="IMG_6209" loading="lazy">
+            <div class="caption">IMG_6209</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(105, 'general')">
+            <img src="IMG_6210.jpg" alt="IMG_6210" loading="lazy">
+            <div class="caption">IMG_6210</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(106, 'general')">
+            <img src="IMG_6211.jpg" alt="IMG_6211" loading="lazy">
+            <div class="caption">IMG_6211</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(107, 'general')">
+            <img src="IMG_6212.jpg" alt="IMG_6212" loading="lazy">
+            <div class="caption">IMG_6212</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(108, 'general')">
+            <img src="IMG_6213.jpg" alt="IMG_6213" loading="lazy">
+            <div class="caption">IMG_6213</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(109, 'general')">
+            <img src="IMG_6214.jpg" alt="IMG_6214" loading="lazy">
+            <div class="caption">IMG_6214</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(110, 'general')">
+            <img src="IMG_6215.jpg" alt="IMG_6215" loading="lazy">
+            <div class="caption">IMG_6215</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(111, 'general')">
+            <img src="IMG_6216.jpg" alt="IMG_6216" loading="lazy">
+            <div class="caption">IMG_6216</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(112, 'general')">
+            <img src="IMG_6217.jpg" alt="IMG_6217" loading="lazy">
+            <div class="caption">IMG_6217</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(113, 'general')">
+            <img src="IMG_6218.jpg" alt="IMG_6218" loading="lazy">
+            <div class="caption">IMG_6218</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(114, 'general')">
+            <img src="IMG_6219.jpg" alt="IMG_6219" loading="lazy">
+            <div class="caption">IMG_6219</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(115, 'general')">
+            <img src="IMG_6220.jpg" alt="IMG_6220" loading="lazy">
+            <div class="caption">IMG_6220</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(116, 'general')">
+            <img src="IMG_6221.jpg" alt="IMG_6221" loading="lazy">
+            <div class="caption">IMG_6221</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(117, 'general')">
+            <img src="IMG_6222.jpg" alt="IMG_6222" loading="lazy">
+            <div class="caption">IMG_6222</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(118, 'general')">
+            <img src="IMG_6223.jpg" alt="IMG_6223" loading="lazy">
+            <div class="caption">IMG_6223</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(119, 'general')">
+            <img src="IMG_6224.jpg" alt="IMG_6224" loading="lazy">
+            <div class="caption">IMG_6224</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(120, 'general')">
+            <img src="IMG_6225.jpg" alt="IMG_6225" loading="lazy">
+            <div class="caption">IMG_6225</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(121, 'general')">
+            <img src="IMG_6226.jpg" alt="IMG_6226" loading="lazy">
+            <div class="caption">IMG_6226</div>
+        </div>
+        <div class="gallery-item" onclick="openLightbox(122, 'general')">
+            <img src="IMG_6227.jpg" alt="IMG_6227" loading="lazy">
+            <div class="caption">IMG_6227</div>
+        </div>
+        </div>
+
+        <div class="footer">
+            Move-in documentation prepared by Kasim Hassen &amp; Amel Salim &mdash; April 4, 2026<br>
+            132 photographs documenting unit condition at time of move-in.
+        </div>
+    </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <button class="lightbox-nav lightbox-prev" onclick="navLightbox(-1)">&#8249;</button>
+    <img id="lightbox-img" src="" alt="">
+    <button class="lightbox-nav lightbox-next" onclick="navLightbox(1)">&#8250;</button>
+    <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
+
+<script>
+    const ACCESS_CODE = "37834";
+
+    function checkAuth() {
+        const input = document.getElementById('authInput').value.trim();
+        if (input === ACCESS_CODE) {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+            sessionStorage.setItem('aptAuth', 'granted');
+        } else {
+            document.getElementById('authError').style.display = 'block';
+            document.getElementById('authInput').value = '';
+            document.getElementById('authInput').focus();
+        }
+    }
+
+    document.getElementById('authInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') checkAuth();
+    });
+
+    if (sessionStorage.getItem('aptAuth') === 'granted') {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('content').style.display = 'block';
+    }
+
+    let currentIndex = 0;
+    let currentList = [];
+    const issueImages = ["ISSUE_Beneath_Dishwasher_defect.jpg","ISSUE_Loose_stove_knob.jpg","ISSUE_Missing_valance.jpg","ISSUE_broken_blind.jpg","ISSUE_broken_door_smaller_bedroom.jpg","ISSUE_main_door_missing_floor_seal.jpg","ISSUE_paint_spotted_floors.jpg","ISSUE_sealing_cracks.jpg","ISSUE_wall_cabinet_defect.jpg"];
+    const generalImages = ["IMG_0762.jpg","IMG_0763.jpg","IMG_0768.jpg","IMG_0769.jpg","IMG_0770.jpg","IMG_0772.jpg","IMG_0773.jpg","IMG_0774.jpg","IMG_0775.jpg","IMG_0776.jpg","IMG_0777.jpg","IMG_0778.jpg","IMG_0779.jpg","IMG_6108.jpg","IMG_6109.jpg","IMG_6110.jpg","IMG_6111.jpg","IMG_6112.jpg","IMG_6113.jpg","IMG_6114.jpg","IMG_6115.jpg","IMG_6116.jpg","IMG_6117.jpg","IMG_6119.jpg","IMG_6121.jpg","IMG_6122.jpg","IMG_6123.jpg","IMG_6124.jpg","IMG_6125.jpg","IMG_6127.jpg","IMG_6128.jpg","IMG_6129.jpg","IMG_6130.jpg","IMG_6131.jpg","IMG_6133.jpg","IMG_6134.jpg","IMG_6135.jpg","IMG_6136.jpg","IMG_6137.jpg","IMG_6138.jpg","IMG_6139.jpg","IMG_6140.jpg","IMG_6141.jpg","IMG_6142.jpg","IMG_6144.jpg","IMG_6145.jpg","IMG_6146.jpg","IMG_6147.jpg","IMG_6149.jpg","IMG_6150.jpg","IMG_6151.jpg","IMG_6152.jpg","IMG_6153.jpg","IMG_6154.jpg","IMG_6155.jpg","IMG_6156.jpg","IMG_6157.jpg","IMG_6158.jpg","IMG_6159.jpg","IMG_6160.jpg","IMG_6162.jpg","IMG_6163.jpg","IMG_6164.jpg","IMG_6165.jpg","IMG_6166.jpg","IMG_6167.jpg","IMG_6168.jpg","IMG_6169.jpg","IMG_6170.jpg","IMG_6171.jpg","IMG_6173.jpg","IMG_6174.jpg","IMG_6175.jpg","IMG_6176.jpg","IMG_6177.jpg","IMG_6178.jpg","IMG_6179.jpg","IMG_6180.jpg","IMG_6181.jpg","IMG_6182.jpg","IMG_6183.jpg","IMG_6184.jpg","IMG_6185.jpg","IMG_6186.jpg","IMG_6187.jpg","IMG_6188.jpg","IMG_6189.jpg","IMG_6190.jpg","IMG_6191.jpg","IMG_6192.jpg","IMG_6193.jpg","IMG_6194.jpg","IMG_6195.jpg","IMG_6196.jpg","IMG_6197.jpg","IMG_6198.jpg","IMG_6201.jpg","IMG_6202.jpg","IMG_6203.jpg","IMG_6204.jpg","IMG_6205.jpg","IMG_6206.jpg","IMG_6207.jpg","IMG_6208.jpg","IMG_6209.jpg","IMG_6210.jpg","IMG_6211.jpg","IMG_6212.jpg","IMG_6213.jpg","IMG_6214.jpg","IMG_6215.jpg","IMG_6216.jpg","IMG_6217.jpg","IMG_6218.jpg","IMG_6219.jpg","IMG_6220.jpg","IMG_6221.jpg","IMG_6222.jpg","IMG_6223.jpg","IMG_6224.jpg","IMG_6225.jpg","IMG_6226.jpg","IMG_6227.jpg"];
+
+    function openLightbox(index, type) {
+        currentList = type === 'issue' ? issueImages : generalImages;
+        currentIndex = index;
+        document.getElementById('lightbox-img').src = currentList[index];
+        document.getElementById('lightbox-counter').textContent = `${index + 1} / ${currentList.length}`;
+        document.getElementById('lightbox').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function navLightbox(dir) {
+        currentIndex = (currentIndex + dir + currentList.length) % currentList.length;
+        document.getElementById('lightbox-img').src = currentList[currentIndex];
+        document.getElementById('lightbox-counter').textContent = `${currentIndex + 1} / ${currentList.length}`;
+    }
+
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (!document.getElementById('lightbox').classList.contains('active')) return;
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navLightbox(-1);
+        if (e.key === 'ArrowRight') navLightbox(1);
+    });
+</script>
+
+</body>
+</html>
