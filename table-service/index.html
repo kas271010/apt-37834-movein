@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>tend · Table Service for Blu Hookah Lounge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="qrcode.js"></script>
+<style>
+  :root{
+    --smoke:#15100D; --char:#1F1712; --ash:#291F18; --line:#3A2C22;
+    --brass:#C99A5B; --cream:#F3E7D7; --mute:#9A8978; --glow:#FFA63D; --core:#FFD27A; --green:#7FA65B; --red:#C5664F;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 75% -10%, rgba(255,90,31,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(94,34,48,.18), transparent 55%),
+      var(--smoke);
+    color:var(--cream);font-family:"Hanken Grotesk",system-ui,sans-serif;
+    min-height:100vh;padding:40px 20px 64px;display:flex;flex-direction:column;align-items:center;
+  }
+  header{max-width:880px;width:100%;text-align:center;margin-bottom:30px}
+  .kicker{font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--brass);font-weight:600;margin-bottom:14px}
+  h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(38px,6vw,60px);line-height:.98}
+  h1 em{font-style:italic;color:var(--glow)}
+  .sub{margin-top:14px;color:var(--mute);font-size:15px;max-width:560px;margin:14px auto 0;line-height:1.55}
+  .roles{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:26px 0 8px}
+  .role{
+    display:inline-flex;align-items:center;gap:9px;text-decoration:none;
+    background:var(--ash);border:1px solid var(--line);color:var(--cream);
+    border-radius:999px;padding:11px 18px;font-size:14px;font-weight:600;transition:.18s;
+  }
+  .role:hover{border-color:var(--brass);color:var(--core)}
+  .role.primary{background:rgba(255,90,31,.14);border-color:rgba(255,90,31,.4);color:var(--core)}
+
+  .panel{
+    max-width:880px;width:100%;background:linear-gradient(180deg,#211912,#1A130F);
+    border:1px solid var(--line);border-radius:20px;padding:22px;margin-top:30px;
+    box-shadow:0 30px 60px -24px rgba(0,0,0,.6);
+  }
+  .panel h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:22px;margin-bottom:4px}
+  .panel .hint{color:var(--mute);font-size:13px;margin-bottom:18px;line-height:1.5}
+
+  .addbar{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;padding-bottom:18px;border-bottom:1px solid var(--line)}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);font-weight:600}
+  .field input{
+    background:var(--smoke);border:1px solid var(--line);color:var(--cream);
+    border-radius:10px;padding:9px 12px;font-family:inherit;font-size:14px;width:130px;outline:none;
+  }
+  .field input:focus{border-color:var(--brass)}
+  .field.short input{width:92px}
+  .btn{
+    background:radial-gradient(circle at 38% 34%, var(--core), var(--glow) 55%, rgba(255,90,31,1) 100%);
+    color:#2a1206;border:none;border-radius:10px;padding:10px 16px;font-family:inherit;
+    font-weight:700;font-size:14px;cursor:pointer;box-shadow:0 0 14px rgba(255,90,31,.4);transition:.18s;white-space:nowrap;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn.ghost{background:var(--ash);color:var(--cream);box-shadow:none;border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--brass);color:var(--core)}
+  .btn.sm{padding:7px 12px;font-size:12px}
+
+  .toolbar{display:flex;gap:10px;margin:18px 0 4px;flex-wrap:wrap;align-items:center}
+  .count{font-size:12px;color:var(--mute);margin-right:auto}
+
+  .sheet{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;margin-top:14px}
+  .empty{color:var(--mute);font-size:14px;padding:30px 6px;text-align:center;grid-column:1/-1}
+  .tent{
+    background:#FBF4E9;color:#1b130d;border-radius:16px;padding:18px 16px 16px;text-align:center;
+    border:1px solid #e6d6bf;break-inside:avoid;position:relative;
+  }
+  .tent .brand{font-family:"Instrument Serif",serif;font-size:19px;line-height:1.05}
+  .tent .ar{color:#9c7434;font-size:11px;letter-spacing:.2em;margin:4px 0 12px}
+  .tent .qr{background:#fff;border-radius:10px;padding:10px;display:inline-block;line-height:0}
+  .tent .qr img,.tent .qr canvas{display:block}
+  .tent .tlabel{margin-top:12px;font-family:"Space Mono",monospace;font-weight:700;font-size:16px;letter-spacing:.04em}
+  .tent .scan{font-size:12px;color:#7a6650;margin-top:3px}
+  .tent .sec{font-size:11px;color:#a8927a;margin-top:2px}
+  .tent .foot{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#a8927a;margin-top:10px}
+  .tent .ctl{display:flex;gap:8px;justify-content:center;margin-top:12px}
+  .tent .ctl button{
+    border:1px solid #d8c6ac;background:#f1e4ce;color:#6b4f30;border-radius:999px;
+    padding:5px 11px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:.15s;
+  }
+  .tent .ctl .regen:hover{border-color:#c08a3a;color:#8a5a16}
+  .tent .ctl .del{color:#a23a26}
+  .tent .ctl .del:hover{border-color:#a23a26;background:#f7d9d0}
+
+  .modeNote{max-width:880px;width:100%;margin-top:26px;border:1px dashed var(--line);border-radius:14px;
+    padding:14px 18px;font-size:13px;color:var(--mute);line-height:1.55;text-align:center}
+  .modeNote b{color:var(--cream)}
+  .madeby{margin-top:30px;font-size:12px;color:#6f6052;text-align:center}
+  .madeby b{color:var(--brass)}
+
+  @media print{
+    @page{margin:14mm}
+    body{background:#fff;color:#000;padding:0;display:block}
+    header,.panel h2,.panel .hint,.addbar,.roles,.toolbar,.modeNote,.madeby,.noprint,.tent .ctl{display:none !important}
+    .panel{box-shadow:none;border:none;background:#fff;padding:0;margin:0}
+    .sheet{grid-template-columns:repeat(2,1fr);gap:10mm}
+    .tent{border:1px dashed #bbb}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="kicker">Table Service · Live</div>
+    <h1>Talk to your table, <em>not just a button</em></h1>
+    <p class="sub">A guest scans the QR on their table and simply asks. Staff see every request glow in live — and watch it cool toward ash the longer it waits.</p>
+    <div class="roles">
+      <a class="role primary" id="staffLink" href="staff.html">🖥️ Open staff dashboard</a>
+      <a class="role" id="previewLink" href="guest.html?table=07&section=khalil&server=Khalil">📱 Preview a guest phone</a>
+    </div>
+  </header>
+
+  <div class="panel">
+    <h2>Tables &amp; QR codes</h2>
+    <p class="hint">Add a table to mint its QR code. Each QR opens the guest page with that table number baked in, so a scan drops the guest onto the right table — no typing. Edit a table and hit <b>Regenerate</b>, or <b>Delete</b> tables you no longer use. Your list is saved on this device. Then <b>Print</b> them as fold-up tent cards.</p>
+
+    <div class="addbar">
+      <div class="field short"><label>Table #</label><input id="newTable" type="text" placeholder="11"></div>
+      <div class="field"><label>Section</label><input id="newSection" type="text" value="khalil"></div>
+      <div class="field"><label>Server</label><input id="newServer" type="text" value="Khalil"></div>
+      <button class="btn" id="add">＋ Add table</button>
+      <button class="btn ghost" id="addRange" title="Add several at once, e.g. 1–10">＋ Add range…</button>
+    </div>
+
+    <div class="toolbar">
+      <span class="count" id="count"></span>
+      <button class="btn ghost sm" id="print">🖨️ Print all</button>
+      <button class="btn ghost sm" id="clearAll">Clear all</button>
+    </div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+
+  <div class="modeNote" id="modeNote"></div>
+  <div class="madeby">A live table-service concept · working name <b>tend</b></div>
+
+<script type="module">
+import { isFirebaseConfigured, VENUE_ID } from "./config.js";
+
+const STORE_KEY = `tend:${VENUE_ID}:tables`;
+const sheet   = document.getElementById("sheet");
+const countEl = document.getElementById("count");
+const pad = (n) => /^\d+$/.test(String(n)) ? String(n).padStart(2, "0") : String(n);
+const uid = () => "t-" + Date.now().toString(36) + "-" + Math.floor(performance.now()*1000).toString(36);
+
+// ── persisted table list ─────────────────────────────────────────────────────
+function load(){
+  try { const v = JSON.parse(localStorage.getItem(STORE_KEY)); if (Array.isArray(v)) return v; }
+  catch {}
+  // First run: seed a sensible default set so the page isn't empty.
+  const seed = [];
+  for (let n = 1; n <= 10; n++) seed.push({ id: uid(), table: pad(n), section: "khalil", server: "Khalil" });
+  return seed;
+}
+let tables = load();
+const save = () => localStorage.setItem(STORE_KEY, JSON.stringify(tables));
+
+// ── guest URL baked with this table's params (absolute, so printed QRs work anywhere) ──
+function guestUrl(t){
+  const u = new URL("guest.html", location.href);
+  u.searchParams.set("table", pad(t.table));
+  if (t.section) u.searchParams.set("section", t.section);
+  if (t.server)  u.searchParams.set("server", t.server);
+  return u.toString();
+}
+
+function renderQR(node, t){
+  // qrcode-generator: type 0 = auto-size, "M" error correction (~15%, scan-robust).
+  const qr = qrcode(0, "M");
+  qr.addData(guestUrl(t));
+  qr.make();
+  // Vector SVG so the printed code stays razor-sharp at any size.
+  node.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 1, scalable: true });
+  const svg = node.querySelector("svg");
+  if (svg){ svg.setAttribute("width", "150"); svg.setAttribute("height", "150"); svg.style.display = "block"; }
+}
+
+function makeCard(t){
+  const card = document.createElement("div");
+  card.className = "tent"; card.dataset.id = t.id;
+  card.innerHTML = `
+    <div class="brand">Blu Hookah Lounge</div>
+    <div class="ar">بلو · hookah lounge</div>
+    <div class="qr"></div>
+    <div class="tlabel">TABLE ${pad(t.table)}</div>
+    <div class="scan">Scan to order from your seat</div>
+    <div class="sec">${t.server ? escapeHtml(t.server) + "’s section" : ""}</div>
+    <div class="foot">powered by tend</div>
+    <div class="ctl">
+      <button class="regen" data-act="regen">↻ Regenerate</button>
+      <button class="del" data-act="del">🗑 Delete</button>
+    </div>`;
+  renderQR(card.querySelector(".qr"), t);
+  card.querySelector('[data-act="regen"]').onclick = () => regen(t.id);
+  card.querySelector('[data-act="del"]').onclick   = () => del(t.id);
+  return card;
+}
+
+function render(){
+  sheet.innerHTML = "";
+  if (tables.length === 0){
+    sheet.innerHTML = '<div class="empty">No tables yet. Add one above to mint its QR code.</div>';
+  } else {
+    tables.forEach(t => sheet.appendChild(makeCard(t)));
+  }
+  countEl.textContent = `${tables.length} table${tables.length===1?"":"s"}`;
+}
+
+// ── actions ──────────────────────────────────────────────────────────────────
+function defaults(){
+  return {
+    section: document.getElementById("newSection").value.trim(),
+    server:  document.getElementById("newServer").value.trim(),
+  };
+}
+function addOne(){
+  const num = document.getElementById("newTable").value.trim();
+  const { section, server } = defaults();
+  // Auto-suggest the next number if the field is blank.
+  let table = num;
+  if (!table){
+    const maxN = tables.reduce((m,t)=>{ const n=parseInt(t.table,10); return isNaN(n)?m:Math.max(m,n); }, 0);
+    table = pad(maxN + 1);
+  }
+  if (tables.some(t => t.table === pad(table))){
+    alert(`Table ${pad(table)} already exists.`); return;
+  }
+  tables.push({ id: uid(), table: pad(table), section, server });
+  save(); render();
+  document.getElementById("newTable").value = "";
+}
+function addRange(){
+  const { section, server } = defaults();
+  const input = prompt("Add a range of tables (e.g. 1-10):", "1-10");
+  if (!input) return;
+  const m = input.match(/^\s*(\d+)\s*[-–to]+\s*(\d+)\s*$/i);
+  if (!m){ alert("Please enter a range like 1-10."); return; }
+  let from = parseInt(m[1],10), to = parseInt(m[2],10);
+  if (from > to) [from, to] = [to, from];
+  let added = 0;
+  for (let n = from; n <= to; n++){
+    const p = pad(n);
+    if (!tables.some(t => t.table === p)){ tables.push({ id: uid(), table: p, section, server }); added++; }
+  }
+  save(); render();
+  if (added === 0) alert("Those tables already exist.");
+}
+function regen(id){
+  const t = tables.find(x => x.id === id); if (!t) return;
+  // Pull current section/server from the add bar so a regenerate can re-point the table.
+  const { section, server } = defaults();
+  if (section) t.section = section;
+  if (server)  t.server  = server;
+  save();
+  const card = sheet.querySelector(`.tent[data-id="${id}"]`);
+  if (card){ renderQR(card.querySelector(".qr"), t); card.querySelector(".sec").textContent = t.server ? `${t.server}’s section` : ""; }
+}
+function del(id){
+  tables = tables.filter(t => t.id !== id);
+  save(); render();
+}
+
+function escapeHtml(x){ return String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+document.getElementById("add").onclick = addOne;
+document.getElementById("addRange").onclick = addRange;
+document.getElementById("newTable").addEventListener("keydown", e => { if (e.key==="Enter") addOne(); });
+document.getElementById("print").onclick = () => { if (tables.length) window.print(); else alert("Add a table first."); };
+document.getElementById("clearAll").onclick = () => { if (confirm("Remove all tables?")){ tables = []; save(); render(); } };
+
+// Keep the guest preview link in sync with the add-bar section/server.
+function syncLinks(){
+  const { section, server } = defaults();
+  const g = new URL("guest.html", location.href);
+  g.searchParams.set("table","07");
+  if (section) g.searchParams.set("section", section);
+  if (server)  g.searchParams.set("server", server);
+  document.getElementById("previewLink").href = g.toString();
+}
+["newSection","newServer"].forEach(id => document.getElementById(id).addEventListener("input", syncLinks));
+syncLinks();
+render();
+
+document.getElementById("modeNote").innerHTML = isFirebaseConfigured
+  ? '✅ <b>Firebase connected.</b> Guest phones and the staff dashboard sync live across devices, anywhere.'
+  : '⚙️ <b>Local demo mode.</b> It works right now and syncs live between tabs on this device. To go cross-device (real phones ↔ the staff iPad), add your Firebase keys in <b>config.js</b> — see README.';
+</script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+//  Firestore security rules for the "tend" table-service app.
+//
+//  Paste these into: Firebase console → Build → Firestore Database → Rules → Publish.
+//
+//  This is a DEMO-grade policy: it lets any client create a request and lets
+//  staff update/read them, without requiring sign-in. That's fine for a
+//  prototype on a controlled venue network. Before real production use you
+//  should put the staff dashboard behind Firebase Auth and tighten the
+//  update/delete/read rules to authenticated staff only (notes inline below).
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /venues/{venue}/requests/{requestId} {
+
+      // Anyone (a guest scanning the QR) can submit a new request, but only
+      // with a sane shape and starting in the "open" state.
+      allow create: if isValidNewRequest();
+
+      // Reading and updating the live queue.
+      //   DEMO: open so the staff dashboard works without login.
+      //   PRODUCTION: replace `true` with `isStaff()` once Auth is added, e.g.
+      //     allow read, update: if request.auth != null
+      //                         && request.auth.token.staff == true;
+      allow read, update: if true;
+
+      // Never let clients hard-delete history; staff mark requests "done".
+      allow delete: if false;
+
+      function isValidNewRequest() {
+        let d = request.resource.data;
+        return d.status == 'open'
+            && d.table is string  && d.table.size() <= 12
+            && d.msg   is string  && d.msg.size() > 0 && d.msg.size() <= 500
+            && d.voice is bool
+            && d.seat is string
+            && d.section is string;
+      }
+    }
+  }
+}

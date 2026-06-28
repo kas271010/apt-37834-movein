@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blu Hookah Lounge — Table Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --smoke:#15100D; --char:#1F1712; --ash:#291F18; --line:#3A2C22;
+    --brass:#C99A5B; --cream:#F3E7D7; --mute:#9A8978;
+    --hot-r:255; --hot-g:90; --hot-b:31; --glow:#FFA63D; --core:#FFD27A;
+    --green:#7FA65B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 75% -10%, rgba(255,90,31,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(94,34,48,.18), transparent 55%),
+      var(--smoke);
+    color:var(--cream);
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    min-height:100%;padding:24px 16px 48px;
+    display:flex;flex-direction:column;align-items:center;
+  }
+  .phone{
+    width:100%;max-width:420px;
+    background:linear-gradient(180deg,#221A14,#1A130F);
+    border:1px solid var(--line);border-radius:34px;padding:14px;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.04);
+  }
+  .screen{background:var(--char);border-radius:24px;overflow:hidden;border:1px solid rgba(255,255,255,.03)}
+  .scan{
+    padding:26px 22px 22px;text-align:center;
+    background:radial-gradient(120% 80% at 50% 0%, rgba(255,90,31,.10), transparent 70%);
+    border-bottom:1px solid var(--line);
+  }
+  .coal{
+    width:46px;height:46px;border-radius:50%;margin:0 auto 14px;
+    background:radial-gradient(circle at 38% 34%, var(--core), var(--glow) 38%, rgba(var(--hot-r),var(--hot-g),var(--hot-b),1) 70%, #7a1d05 100%);
+    box-shadow:0 0 22px 4px rgba(255,90,31,.55), 0 0 6px 1px rgba(255,210,122,.6);
+    animation:breathe 3.4s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{box-shadow:0 0 18px 3px rgba(255,90,31,.45),0 0 5px 1px rgba(255,210,122,.5);transform:translateY(0)}
+    50%{box-shadow:0 0 30px 7px rgba(255,90,31,.7),0 0 9px 2px rgba(255,210,122,.75);transform:translateY(-1px)}
+  }
+  .venue{font-family:"Instrument Serif",serif;font-size:26px;line-height:1.05}
+  .venueAr{color:var(--brass);font-size:13px;letter-spacing:.2em;margin-top:6px}
+  .tablePill{
+    display:inline-flex;align-items:center;gap:7px;margin-top:14px;
+    background:var(--ash);border:1px solid var(--line);border-radius:999px;
+    padding:6px 13px;font-size:12px;color:var(--mute);
+  }
+  .tablePill b{font-family:"Space Mono",monospace;color:var(--cream);font-size:13px}
+  .body{padding:18px}
+  .ask{font-size:13px;color:var(--mute);margin-bottom:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+  .chip{
+    background:var(--ash);border:1px solid var(--line);color:var(--cream);
+    border-radius:999px;padding:8px 13px;font-size:13px;font-weight:500;
+    cursor:pointer;transition:.18s;font-family:inherit;
+  }
+  .chip:hover{border-color:var(--brass);color:var(--core)}
+  .chip:active{transform:scale(.96)}
+  .composer{
+    background:var(--smoke);border:1px solid var(--line);border-radius:16px;
+    padding:10px 10px 10px 14px;display:flex;align-items:flex-end;gap:8px;
+  }
+  .composer textarea{
+    flex:1;background:transparent;border:none;color:var(--cream);
+    font-family:inherit;font-size:14px;line-height:1.45;resize:none;
+    max-height:96px;outline:none;padding:5px 0;
+  }
+  .composer textarea::placeholder{color:#6f6052}
+  .iconbtn{
+    flex:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);
+    background:var(--ash);color:var(--mute);cursor:pointer;font-size:16px;
+    display:grid;place-items:center;transition:.18s;
+  }
+  .iconbtn:hover{color:var(--core);border-color:var(--brass)}
+  .send{
+    flex:none;width:38px;height:38px;border-radius:50%;border:none;cursor:pointer;
+    background:radial-gradient(circle at 38% 34%, var(--core), var(--glow) 45%, rgba(var(--hot-r),var(--hot-g),var(--hot-b),1) 100%);
+    color:#2a1206;font-size:16px;display:grid;place-items:center;font-weight:700;
+    box-shadow:0 0 14px rgba(255,90,31,.5);transition:.18s;
+  }
+  .send:hover{transform:scale(1.06)}
+  .send:disabled{opacity:.4;box-shadow:none;cursor:default;transform:none}
+  .thread{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .bubble{
+    align-self:flex-end;max-width:88%;
+    background:linear-gradient(180deg,#33271d,#2a2017);
+    border:1px solid var(--line);border-radius:16px 16px 5px 16px;
+    padding:10px 13px;font-size:14px;line-height:1.4;
+    animation:rise .3s ease;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .bubble .meta{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:11px;color:var(--mute)}
+  .bubble .meta .tick{color:var(--brass)}
+  .bubble.staff{
+    align-self:flex-start;border-radius:16px 16px 16px 5px;
+    background:var(--ash);border-color:var(--line);
+  }
+  .bubble.staff .who{font-size:11px;color:var(--brass);font-weight:600;margin-bottom:3px;letter-spacing:.04em}
+  .modeTag{
+    margin-top:18px;font-size:11px;color:#6f6052;letter-spacing:.05em;text-align:center;max-width:420px;
+  }
+  .modeTag b{color:var(--brass)}
+  .live{display:inline-flex;align-items:center;gap:6px}
+  .live .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+  <div class="phone">
+    <div class="screen">
+      <div class="scan">
+        <div class="coal"></div>
+        <div class="venue">Blu Hookah Lounge</div>
+        <div class="venueAr">بلو · hookah lounge</div>
+        <div class="tablePill">Table <b id="tableNum">07</b> · <span id="sectionName">Khalil's section</span></div>
+      </div>
+      <div class="body">
+        <div class="ask">What do you need? Tap one or just type.</div>
+        <div class="chips" id="chips"></div>
+        <div class="composer">
+          <textarea id="msg" rows="1" placeholder="Message the floor…"></textarea>
+          <button class="iconbtn" id="mic" title="Send a voice note">🎤</button>
+          <button class="send" id="send" title="Send">↑</button>
+        </div>
+        <div class="thread" id="thread"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modeTag" id="modeTag"></div>
+
+<script type="module">
+import { storeReady } from "./store.js";
+
+const params = new URLSearchParams(location.search);
+const TABLE   = params.get("table")   || "07";
+const SECTION = params.get("section") || "khalil";
+const SERVER  = params.get("server")  || "Khalil";
+const SEAT    = params.get("seat")    || `${SERVER}'s section`;
+
+document.getElementById("tableNum").textContent = TABLE;
+document.getElementById("sectionName").textContent = SEAT;
+document.getElementById("msg").placeholder = `Message ${SERVER}…`;
+
+const QUICK = [
+  {label:"More coals 🔥", text:"Can I get more coals when you get a chance? 🙏"},
+  {label:"Refill water",  text:"Could we get a water refill please?"},
+  {label:"Change the bowl", text:"Ready for a fresh bowl whenever you can."},
+  {label:"The bill",      text:"We'll take the bill when convenient."},
+];
+
+const chipsEl  = document.getElementById("chips");
+const msgEl    = document.getElementById("msg");
+const sendEl   = document.getElementById("send");
+const micEl    = document.getElementById("mic");
+const threadEl = document.getElementById("thread");
+const modeTag  = document.getElementById("modeTag");
+
+QUICK.forEach(q => {
+  const b = document.createElement("button");
+  b.className = "chip"; b.textContent = q.label;
+  b.onclick = () => { msgEl.value = q.text; msgEl.focus(); autosize(); };
+  chipsEl.appendChild(b);
+});
+
+function autosize(){ msgEl.style.height="auto"; msgEl.style.height=Math.min(msgEl.scrollHeight,96)+"px"; }
+function escapeHtml(x){ return x.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+const store = await storeReady;
+
+modeTag.innerHTML = store.mode === "firebase"
+  ? '<span class="live"><span class="pulse"></span> Live</span> · connected to staff in real time'
+  : '<span class="live"><span class="pulse"></span> Live (local)</span> · open <b>staff.html</b> in another tab to see it sync — add Firebase keys for cross-device';
+
+// Track this guest's own requests so we can show status + staff replies live.
+const myBubbles = new Map(); // id -> {statusEl, tickEl, repliedFlag}
+
+function addBubble(id, text, voice){
+  const wrap = document.createElement("div");
+  wrap.className = "bubble";
+  wrap.innerHTML =
+    (voice ? '<span style="color:var(--brass)">🎤 voice note · </span>' : '') +
+    escapeHtml(text) +
+    '<div class="meta"><span class="tick">✓</span><span class="st">Sent</span></div>';
+  threadEl.appendChild(wrap);
+  myBubbles.set(id, { statusEl: wrap.querySelector(".st"), tickEl: wrap.querySelector(".tick"), replied:false });
+  threadEl.scrollTop = threadEl.scrollHeight;
+}
+
+function reflectStatus(r){
+  const b = myBubbles.get(r.id);
+  if (!b) return;
+  if (r.status === "otw"){
+    b.statusEl.textContent = `On the way`; b.tickEl.textContent = "✓✓";
+    if (!b.replied){
+      b.replied = true;
+      const reply = document.createElement("div");
+      reply.className = "bubble staff";
+      const line = r.staffReply || `On my way 👍`;
+      reply.innerHTML = `<div class="who">${escapeHtml(SERVER)}</div>${escapeHtml(line)}`;
+      threadEl.appendChild(reply);
+      threadEl.scrollTop = threadEl.scrollHeight;
+    }
+  } else if (r.status === "done"){
+    b.statusEl.textContent = "Taken care of ✓"; b.tickEl.textContent = "✓✓";
+  }
+}
+
+async function doSend(voice){
+  let text = msgEl.value.trim();
+  if (voice && !text) text = "Can I get more coals when you get a chance? 🙏";
+  if (!text) return;
+  msgEl.value = ""; autosize();
+  const id = await store.addRequest({
+    table: TABLE, seat: SEAT, section: SECTION, msg: text, voice: !!voice,
+  });
+  addBubble(id, text, voice);
+  // Watch this request for staff status changes, live.
+  store.subscribeOne(id, (r) => { if (r) reflectStatus(r); });
+}
+
+msgEl.addEventListener("input", autosize);
+msgEl.addEventListener("keydown", e => { if (e.key==="Enter" && !e.shiftKey){ e.preventDefault(); doSend(false); } });
+sendEl.onclick = () => doSend(false);
+micEl.onclick  = () => doSend(true);
+</script>
+</body>
+</html>

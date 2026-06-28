@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blu — Staff Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --smoke:#15100D; --char:#1F1712; --ash:#291F18; --line:#3A2C22;
+    --brass:#C99A5B; --cream:#F3E7D7; --mute:#9A8978;
+    --hot-r:255; --hot-g:90; --hot-b:31; --glow:#FFA63D; --core:#FFD27A;
+    --cold-r:96; --cold-g:88; --cold-b:80; --green:#7FA65B;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:
+      radial-gradient(1200px 600px at 75% -10%, rgba(255,90,31,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 110%, rgba(94,34,48,.18), transparent 55%),
+      var(--smoke);
+    color:var(--cream);font-family:"Hanken Grotesk",system-ui,sans-serif;
+    min-height:100%;padding:24px 16px 56px;display:flex;flex-direction:column;align-items:center;
+  }
+  .dash{
+    width:100%;max-width:640px;
+    background:linear-gradient(180deg,#211912,#1A130F);
+    border:1px solid var(--line);border-radius:22px;overflow:hidden;
+    box-shadow:0 30px 60px -24px rgba(0,0,0,.6);
+  }
+  .dashTop{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 20px;border-bottom:1px solid var(--line);
+    background:radial-gradient(120% 120% at 100% 0%, rgba(255,90,31,.08), transparent 60%);
+  }
+  .dashTop .l{display:flex;align-items:center;gap:12px}
+  .dashTop h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:22px}
+  .live{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+  .live .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  .station{font-size:12px;color:var(--mute);font-family:"Space Mono",monospace}
+  .queue{padding:16px;display:flex;flex-direction:column;gap:12px;min-height:320px}
+  .empty{margin:auto;text-align:center;color:var(--mute);font-size:14px;padding:40px 10px}
+  .empty .e2{font-size:12px;margin-top:6px;color:#6f6052}
+  .card{
+    position:relative;display:flex;gap:14px;align-items:flex-start;
+    background:var(--char);border:1px solid var(--line);border-radius:16px;
+    padding:14px 15px 14px 16px;overflow:hidden;animation:slideIn .45s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes slideIn{from{opacity:0;transform:translateY(-10px) scale(.98)}to{opacity:1;transform:none}}
+  .card .embercoal{flex:none;width:16px;height:16px;border-radius:50%;margin-top:3px;transition:background .8s linear, box-shadow .8s linear}
+  .card .c-main{flex:1;min-width:0}
+  .card .c-top{display:flex;align-items:baseline;gap:9px;margin-bottom:3px}
+  .card .tnum{font-family:"Space Mono",monospace;font-weight:700;font-size:14px;color:var(--cream)}
+  .card .seat{font-size:11px;color:var(--mute)}
+  .card .msg{font-size:14px;line-height:1.4;color:var(--cream);word-wrap:break-word}
+  .card .msg .vtag{color:var(--brass);font-size:12px}
+  .card .c-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px}
+  .wait{font-size:11px;font-family:"Space Mono",monospace;transition:color .8s linear}
+  .cold-note{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8a7d70;display:none}
+  .card.cold .cold-note{display:inline}
+  .acts{display:flex;gap:7px}
+  .act{
+    border:1px solid var(--line);background:var(--ash);color:var(--cream);
+    border-radius:999px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;transition:.16s;font-family:inherit;
+  }
+  .act:hover{border-color:var(--brass);color:var(--core)}
+  .act.primary{background:rgba(255,90,31,.14);border-color:rgba(255,90,31,.4);color:var(--core)}
+  .act.done:hover{border-color:var(--green);color:var(--green)}
+  .card.acked .embercoal{animation:none}
+  .ackbadge{display:none;align-items:center;gap:5px;font-size:11px;color:var(--green);font-weight:600}
+  .card.acked .ackbadge{display:inline-flex}
+  .card.acked .act.primary{display:none}
+  .modeTag{margin-top:18px;font-size:11px;color:#6f6052;letter-spacing:.05em;text-align:center;max-width:640px}
+  .modeTag b{color:var(--brass)}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+  <div class="dash">
+    <div class="dashTop">
+      <div class="l">
+        <h2>Open requests</h2>
+        <span class="live"><span class="pulse"></span> Live</span>
+      </div>
+      <span class="station" id="station">KHALIL · Tables 05–10</span>
+    </div>
+    <div class="queue" id="queue"></div>
+  </div>
+  <div class="modeTag" id="modeTag"></div>
+
+<script type="module">
+import { storeReady } from "./store.js";
+
+const COOL_SECONDS = 90; // a fresh ember fully cools to ash in this many seconds
+const params = new URLSearchParams(location.search);
+const FILTER_SECTION = params.get("section") || ""; // empty = show all sections
+const STATION_LABEL  = params.get("station") || "KHALIL · Tables 05–10";
+document.getElementById("station").textContent = STATION_LABEL;
+
+const queueEl = document.getElementById("queue");
+const modeTag = document.getElementById("modeTag");
+
+const lerp = (a,b,t)=>a+(b-a)*t;
+const getC = (n)=>parseInt(getComputedStyle(document.documentElement).getPropertyValue(n));
+function emberColor(t){
+  return {
+    r: Math.round(lerp(getC('--cold-r'),getC('--hot-r'),t)),
+    g: Math.round(lerp(getC('--cold-g'),getC('--hot-g'),t)),
+    b: Math.round(lerp(getC('--cold-b'),getC('--hot-b'),t)),
+  };
+}
+function escapeHtml(x){ return x.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmt(s){ s=Math.floor(s); const m=Math.floor(s/60), ss=s%60; return m>0?`${m}m ${ss}s`:`${ss}s`; }
+
+let requests = [];
+const store = await storeReady;
+
+modeTag.innerHTML = store.mode === "firebase"
+  ? '<span class="live"><span class="pulse"></span></span> Real-time via Firestore · requests appear the instant a guest sends them'
+  : 'Local mode · syncs live with <b>guest.html</b> tabs on this device — add Firebase keys for true cross-device';
+
+store.subscribeOpen((rows) => {
+  requests = FILTER_SECTION ? rows.filter(r => r.section === FILTER_SECTION) : rows;
+  render();
+});
+
+function render(){
+  queueEl.innerHTML = "";
+  if (requests.length === 0){
+    queueEl.innerHTML = '<div class="empty">All caught up.<div class="e2">New requests will glow in here.</div></div>';
+    return;
+  }
+  requests.forEach(r => {
+    const acked = r.status === "otw";
+    const card = document.createElement("div");
+    card.className = "card" + (acked ? " acked" : "");
+    card.dataset.id = r.id;
+    card.innerHTML = `
+      <span class="embercoal"></span>
+      <div class="c-main">
+        <div class="c-top"><span class="tnum">T${escapeHtml(r.table)}</span><span class="seat">${escapeHtml(r.seat||"")}</span></div>
+        <div class="msg">${r.voice?'<span class="vtag">🎤 voice → </span>':''}${escapeHtml(r.msg)}</div>
+        <div class="c-foot">
+          <span><span class="wait"></span> <span class="cold-note">· getting cold</span> <span class="ackbadge">✓ on the way</span></span>
+          <span class="acts">
+            <button class="act primary" data-act="otw">On the way</button>
+            <button class="act done" data-act="done">Done</button>
+          </span>
+        </div>
+      </div>`;
+    card.querySelector('[data-act="otw"]').onclick = () =>
+      store.updateRequest(r.id, { status:"otw", staffReply:"On my way 👍" });
+    card.querySelector('[data-act="done"]').onclick = () =>
+      store.updateRequest(r.id, { status:"done" });
+    queueEl.appendChild(card);
+  });
+  paint();
+}
+
+function paint(){
+  document.querySelectorAll(".card").forEach(card => {
+    const r = requests.find(x => x.id == card.dataset.id);
+    if (!r) return;
+    const age = (Date.now() - r.createdAt)/1000;
+    const t = Math.max(0, Math.min(1, 1 - age/COOL_SECONDS));
+    const {r:cr,g:cg,b:cb} = emberColor(t);
+    const coal = card.querySelector(".embercoal");
+    coal.style.background = `radial-gradient(circle at 38% 34%, rgba(${Math.min(255,cr+90)},${Math.min(255,cg+90)},${Math.min(255,cb+50)},1), rgb(${cr},${cg},${cb}) 70%)`;
+    coal.style.boxShadow = (r.status==="otw") ? "none" : `0 0 ${4+12*t}px ${1+3*t}px rgba(${cr},${cg},${cb},${.25+.5*t})`;
+    const wait = card.querySelector(".wait");
+    wait.textContent = fmt(age);
+    wait.style.color = `rgb(${cr},${cg},${cb})`;
+    card.classList.toggle("cold", t<=0.12 && r.status!=="otw");
+  });
+}
+
+setInterval(paint, 1000);
+</script>
+</body>
+</html>
